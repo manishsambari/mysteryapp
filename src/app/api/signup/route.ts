@@ -8,15 +8,15 @@ export async function POST(request: Request) {
   await dbconnect();    
   try {
     const { username, email, password } = await request.json();
-    const existingUserVerifiedbyUsername = await UserModel.findOne({ username, isVerified: true }); 
+    const existingUserVerifiedbyUsername = await UserModel.findOne({ username, isverified: true }); 
     if (existingUserVerifiedbyUsername) {
         return Response.json({ success: false, message: "Username is already taken" }, { status: 400 });  
          
     }
 
-    const existingUserVerifiedbyEmail = await UserModel.findOne({ email, isVerified: true });
+    const existingUserVerifiedbyEmail = await UserModel.findOne({ email, isverified: true });
     if (existingUserVerifiedbyEmail) {
-        if (existingUserVerifiedbyEmail.isVerified) {
+        if (existingUserVerifiedbyEmail.isverified) {
             return Response.json({ success: false, message: "Username is already taken" }, { status: 400 }); 
         } else {
               const hashedPassword = await bcrypt.hash(password, 10);

@@ -16,7 +16,18 @@ export async function POST(request: Request) {
 
     const existingUserVerifiedbyEmail = await UserModel.findOne({ email, isVerified: true });
     if (existingUserVerifiedbyEmail) {
-        true // TODO: Back here 
+        if (existingUserVerifiedbyEmail.isVerified) {
+            return Response.json({ success: false, message: "Username is already taken" }, { status: 400 }); 
+        } else {
+              const hashedPassword = await bcrypt.hash(password, 10);
+              existingUserVerifiedbyEmail.password = hashedPassword;
+              existingUserVerifiedbyEmail.VerifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+              const expiryDate = new Date();
+              expiryDate.setHours(expiryDate.getHours() + 1);
+              existingUserVerifiedbyEmail.verifycodexpriy = expiryDate;
+              await existingUserVerifiedbyEmail.save();
+
+        }
     }
     else{
       const hashedPassword = await bcrypt.hash(password, 10);
